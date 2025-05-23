@@ -8,7 +8,6 @@ using Xunit;
 
 using MyApi.API.repository;
 using MyApi.API.model;
-using MyApi.API.dto;
 
 
 public class InMemoryBookRepositoryTest
