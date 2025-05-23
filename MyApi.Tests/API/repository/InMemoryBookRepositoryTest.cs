@@ -12,7 +12,7 @@ using MyApi.API.model;
 
 public class InMemoryBookRepositoryTest
 {
-  [Fact(DisplayName = "Should return all books")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should return all books")]
   public Task GetAllBooks()
   {
     // Arrange
@@ -36,7 +36,7 @@ public class InMemoryBookRepositoryTest
     return Task.CompletedTask;
   }
 
-  [Fact(DisplayName = "Should return book by id")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should return book by id")]
   public Task GetBookById()
   {
     // Arrange
@@ -57,7 +57,7 @@ public class InMemoryBookRepositoryTest
     return Task.CompletedTask;
   }
 
-  [Fact(DisplayName = "Should return none when book not found")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should return none when book not found")]
   public Task FailToGetBookById()
   {
     // Arrange
@@ -78,7 +78,7 @@ public class InMemoryBookRepositoryTest
     return Task.CompletedTask;
   }
 
-  [Fact(DisplayName = "Should Create book")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should Create book")]
   public Task CreateBook()
   {
     // Arrange
@@ -94,7 +94,7 @@ public class InMemoryBookRepositoryTest
     return Task.CompletedTask;
   }
 
-  [Fact(DisplayName = "Should fail to create book with existing id")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should fail to create book with existing id")]
   public Task FailToCreateBookWithExistingId()
   {
     // Arrange
@@ -111,7 +111,7 @@ public class InMemoryBookRepositoryTest
     return Task.CompletedTask;
   }
 
-  [Fact(DisplayName = "Should update book")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should update book")]
   public Task UpdateBook()
   {
     // Arrange
@@ -135,7 +135,7 @@ public class InMemoryBookRepositoryTest
     return Task.CompletedTask;
   }
 
-  [Fact(DisplayName = "Should fail to update book with non existing id")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should fail to update book with non existing id")]
   public Task FailToUpdateBookWithNonExistingId()
   {
     // Arrange
@@ -159,7 +159,7 @@ public class InMemoryBookRepositoryTest
     return Task.CompletedTask;
   }
 
-  [Fact(DisplayName = "Should delete book")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should delete book")]
   public Task DeleteBook()
   {
     // Arrange
@@ -182,7 +182,7 @@ public class InMemoryBookRepositoryTest
     return Task.CompletedTask;
   }
 
-  [Fact(DisplayName = "Should fail to delete book with non existing id")]
+  [Fact(DisplayName = "InMemoryBookRepository: Should fail to delete book with non existing id")]
   public Task FailToDeleteBookWithNonExistingId()
   {
     // Arrange
