@@ -1,8 +1,8 @@
-namespace MyApi.repository;
+namespace MyApi.API.repository;
 
 using System;
-using MyApi.model;
-using MyApi.utils.Functional;
+using MyApi.API.model;
+using MyApi.API.utils.Functional;
 
 public class InMemoryBookRepository : IBookRepository
 {
