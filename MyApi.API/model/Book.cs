@@ -1,32 +1,31 @@
-namespace MyApi.API.model
+namespace MyApi.API.model;
+
+using MyApi.API.dto;
+
+
+public class Book
 {
-  using MyApi.API.dto;
+  public Guid Id { get; set; }
+  public string Title { get; set; }
+  public string Author { get; set; }
+  public string Genre { get; set; }
+  public uint Price { get; set; }
 
-
-  public class Book
+  public Book(System.Guid id, string title, string author, string genre, uint price)
   {
-    public Guid Id { get; set; }
-    public string Title { get; set; }
-    public string Author { get; set; }
-    public string Genre { get; set; }
-    public uint Price { get; set; }
+    Id = id;
+    Title = title;
+    Author = author;
+    Genre = genre;
+    Price = price;
+  }
 
-    public Book(System.Guid id, string title, string author, string genre, uint price)
-    {
-      Id = id;
-      Title = title;
-      Author = author;
-      Genre = genre;
-      Price = price;
-    }
-
-    public Book(NewBookDTO newBookDTO)
-    {
-      Id = System.Guid.NewGuid();
-      Title = newBookDTO.Title;
-      Author = newBookDTO.Author;
-      Genre = newBookDTO.Genre;
-      Price = newBookDTO.Price;
-    }
+  public Book(NewBookDTO newBookDTO)
+  {
+    Id = System.Guid.NewGuid();
+    Title = newBookDTO.Title;
+    Author = newBookDTO.Author;
+    Genre = newBookDTO.Genre;
+    Price = newBookDTO.Price;
   }
 }
