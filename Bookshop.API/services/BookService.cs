@@ -13,11 +13,11 @@ public class BookService(BookValidador bookValidador, BookRepository bookReposit
 {
   public List<Book> GetAll() => bookRepository.GetAll();
 
-  public Option<BookNotFoundException> Get(Guid id)
+  public Result<Book, BookNotFoundException> Get(Guid id)
   {
     return bookRepository.Get(id).Match(
-      book => Option<BookNotFoundException>.None(),
-      () => Option<BookNotFoundException>.Some(new BookNotFoundException(id))
+      book => Result<Book, BookNotFoundException>.Ok(book),
+      () => Result<Book, BookNotFoundException>.Err(new BookNotFoundException(id))
     );
   }
 
