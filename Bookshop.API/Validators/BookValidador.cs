@@ -9,7 +9,7 @@ namespace Bookshop.API.Validators;
 public class BookValidador
 {
 
-  public static Option<List<string>> Validate(Book book)
+  public Option<List<string>> Validate(Book book)
   {
     var errors = new List<string>();
 
