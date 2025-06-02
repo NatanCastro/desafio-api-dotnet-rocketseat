@@ -8,6 +8,10 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
 # Build results
+
+.idea/
+Bookshop.sln.DotSettings.user
+
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

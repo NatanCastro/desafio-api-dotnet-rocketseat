@@ -1,62 +1,67 @@
 using System;
 using Bookshop.API.DTO;
 using Bookshop.API.Entity;
-using Bookshop.API.Exceptions;
-using Bookshop.API.records.results;
+using Bookshop.API.Errors;
 using Bookshop.API.repositories;
 using Bookshop.API.Validators;
 using Bookshop.Shared.Functional;
+using OneOf;
 
 namespace Bookshop.API.services;
 
+using UpdateBookError = OneOf<NotFoundError, InvalidDataError>;
+
 public class BookService(BookValidador bookValidador, BookRepository bookRepository)
 {
-  public List<Book> GetAll() => bookRepository.GetAll();
+    public List<Book> GetAll()
+    {
+        return bookRepository.GetAll();
+    }
 
-  public Result<Book, BookNotFoundException> Get(Guid id)
-  {
-    return bookRepository.Get(id).Match(
-      book => Result<Book, BookNotFoundException>.Ok(book),
-      () => Result<Book, BookNotFoundException>.Err(new BookNotFoundException(id))
-    );
-  }
+    public Result<Book, NotFoundError> Get(Guid id)
+    {
+        return bookRepository.Get(id).Match(
+            book => Result<Book, NotFoundError>.Ok(book),
+            () => Result<Book, NotFoundError>.Err(new NotFoundError($"Book with {id} was not found."))
+        );
+    }
 
-  public Option<InvalidCreateBookDTOException> Create(CreateBookDTO dto)
-  {
-    Book book = new(dto);
+    public Option<InvalidDataError> Create(CreateBookDTO dto)
+    {
+        Book book = new(dto);
 
-    return bookValidador
-      .Validate(book)
-      .Match(
-        errors => Option<InvalidCreateBookDTOException>.Some(new InvalidCreateBookDTOException(errors)),
-        () =>
-        {
-          bookRepository.Add(book);
-          return Option<InvalidCreateBookDTOException>.None();
-        }
-      );
-  }
+        return BookValidador.Validate(book)
+            .Match(
+                errors => Option<InvalidDataError>.Some(
+                    new InvalidDataError("invalid data to create book.", errors)),
+                () =>
+                {
+                    bookRepository.Add(book);
+                    return Option<InvalidDataError>.None();
+                }
+            );
+    }
 
-  public UpdateBookResult Update(Guid id, UpdateBookDTO dto)
-  {
-    Book book = new(id, dto);
-    return bookValidador
-      .Validate(book)
-      .Match(
-        errors => new UpdateBookResult(Option<Exception>.Some(new InvalidUpdateBookDTOException(errors))),
-        () =>
-        {
-          bookRepository.Update(book);
-          return new UpdateBookResult();
-        }
-      );
-  }
+    public Option<UpdateBookError> Update(Guid id, UpdateBookDTO dto)
+    {
+        Book book = new(id, dto);
+        return BookValidador.Validate(book)
+            .Match(
+                errors => Option<UpdateBookError>.Some(
+                    new InvalidDataError($"Could not update with ID: {id}", errors)),
+                () =>
+                {
+                    bookRepository.Update(book);
+                    return Option<UpdateBookError>.None();
+                }
+            );
+    }
 
-  public Option<BookNotFoundException> Delete(Guid id)
-  {
-    return bookRepository.Delete(id).Match(
-      book => Option<BookNotFoundException>.None(),
-      () => Option<BookNotFoundException>.Some(new BookNotFoundException(id))
-    );
-  }
+    public Option<NotFoundError> Delete(Guid id)
+    {
+        return bookRepository.Delete(id).Match(
+            book => Option<NotFoundError>.None(),
+            () => Option<NotFoundError>.Some(new NotFoundError($"Book with {id} was not found."))
+        );
+    }
 }

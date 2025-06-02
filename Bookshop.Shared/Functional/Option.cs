@@ -39,21 +39,28 @@ public class Option<T> : Option
     /// <summary>
     /// Creates an Option containing the specified value.
     /// </summary>
-    public static Option<T> Some(T value) =>
-        value is null
+    public static Option<T> Some(T value)
+    {
+        return value is null
             ? throw new ArgumentNullException(nameof(value), "Cannot create Some with null value. Use None instead.")
             : new Option<T>(value, true);
+    }
 
     /// <summary>
     /// Creates an empty Option.
     /// </summary>
-    public static Option<T> None() => new Option<T>(default, false);
+    public static Option<T> None()
+    {
+        return new Option<T>(default, false);
+    }
 
     /// <summary>
     /// Creates an Option from a nullable value.
     /// </summary>
-    public static Option<T> FromNullable(T? value) =>
-        value is null ? None() : Some(value);
+    public static Option<T> FromNullable(T? value)
+    {
+        return value is null ? None() : Some(value);
+    }
 
     /// <summary>
     /// Returns the contained value if present, otherwise throws an exception.
@@ -70,60 +77,80 @@ public class Option<T> : Option
     /// <summary>
     /// Returns the contained value if present, otherwise returns the provided default value.
     /// </summary>
-    public T UnwrapOr(T defaultValue) =>
-        HasValue ? _value! : defaultValue;
+    public T UnwrapOr(T defaultValue)
+    {
+        return HasValue ? _value! : defaultValue;
+    }
 
     /// <summary>
     /// Returns the contained value if present, otherwise returns the default value for type T.
     /// </summary>
-    public T? UnwrapOrDefault() =>
-        HasValue ? _value : default;
+    public T? UnwrapOrDefault()
+    {
+        return HasValue ? _value : default;
+    }
 
     /// <summary>
     /// Applies a mapping function to the contained value if present, otherwise returns None.
     /// </summary>
-    public Option<U> Map<U>(Func<T, U> mapper) =>
-        HasValue ? Option<U>.Some(mapper(_value!)) : Option<U>.None();
+    public Option<U> Map<U>(Func<T, U> mapper)
+    {
+        return HasValue ? Option<U>.Some(mapper(_value!)) : Option<U>.None();
+    }
 
     /// <summary>
     /// Applies a function that returns an Option to the contained value if present, otherwise returns None.
     /// </summary>
-    public Option<U> AndThen<U>(Func<T, Option<U>> mapper) =>
-        HasValue ? mapper(_value!) : Option<U>.None();
+    public Option<U> AndThen<U>(Func<T, Option<U>> mapper)
+    {
+        return HasValue ? mapper(_value!) : Option<U>.None();
+    }
 
     /// <summary>
     /// Returns the result of applying one of two functions depending on whether the option contains a value.
     /// </summary>
-    public U Match<U>(Func<T, U> some, Func<U> none) =>
-        HasValue ? some(_value!) : none();
+    public U Match<U>(Func<T, U> some, Func<U> none)
+    {
+        return HasValue ? some(_value!) : none();
+    }
 
     /// <summary>
     /// Returns the current option if it contains a value, otherwise returns the provided option.
     /// </summary>
-    public Option<T> Or(Option<T> other) =>
-        HasValue ? this : other;
+    public Option<T> Or(Option<T> other)
+    {
+        return HasValue ? this : other;
+    }
 
     /// <summary>
     /// Returns the current option if it contains a value, otherwise returns the option produced by the provided function.
     /// </summary>
-    public Option<T> OrElse(Func<Option<T>> otherProvider) =>
-        HasValue ? this : otherProvider();
+    public Option<T> OrElse(Func<Option<T>> otherProvider)
+    {
+        return HasValue ? this : otherProvider();
+    }
 
     /// <summary>
     /// Returns the current option if it contains a value and satisfies the predicate, otherwise returns None.
     /// </summary>
-    public Option<T> Filter(Predicate<T> predicate) =>
-        HasValue && predicate(_value!) ? this : None();
+    public Option<T> Filter(Predicate<T> predicate)
+    {
+        return HasValue && predicate(_value!) ? this : None();
+    }
 
     /// <summary>
     /// Converts this Option to a Result with the specified error in case the Option is None.
     /// </summary>
-    public Result<T, E> ToResult<E>(Func<E> errorProvider) where E : Exception =>
-        HasValue ? Result<T, E>.Ok(_value!) : Result<T, E>.Err(errorProvider());
+    public Result<T, E> ToResult<E>(Func<E> errorProvider) where E : Exception
+    {
+        return HasValue ? Result<T, E>.Ok(_value!) : Result<T, E>.Err(errorProvider());
+    }
 
     /// <summary>
     /// Converts this Option to a Result with the specified error in case the Option is None.
     /// </summary>
-    public Result<T, E> ToResult<E>(E error) where E : Exception =>
-        HasValue ? Result<T, E>.Ok(_value!) : Result<T, E>.Err(error);
+    public Result<T, E> ToResult<E>(E error) where E : Exception
+    {
+        return HasValue ? Result<T, E>.Ok(_value!) : Result<T, E>.Err(error);
+    }
 }

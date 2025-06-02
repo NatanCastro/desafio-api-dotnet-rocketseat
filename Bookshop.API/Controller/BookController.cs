@@ -1,7 +1,5 @@
 using Bookshop.API.DTO;
 using Bookshop.API.Entity;
-using Bookshop.API.enums.results;
-using Bookshop.API.Exceptions;
 using Bookshop.API.records.responses;
 using Bookshop.API.services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,70 +11,63 @@ namespace Bookshop.API.Controller;
 [ApiController]
 public class BookController(BookService bookService) : ControllerBase
 {
-    private readonly BookService bookService = bookService;
+    private readonly BookService _bookService = bookService;
 
     [HttpGet]
     [ProducesResponseType(typeof(List<Book>), StatusCodes.Status200OK)]
     public IActionResult FindBooks()
     {
-        return Ok(bookService.GetAll());
+        return Ok(_bookService.GetAll());
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(Book), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BookNotFoundResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(NotFoundResponse), StatusCodes.Status404NotFound)]
     public IActionResult FindBookById([FromRoute] Guid id)
     {
-        return bookService.Get(id).Match<IActionResult>(
-            book => Ok(book),
-            ex => NotFound(new BookNotFoundResponse(ex))
+        return _bookService.Get(id).Match<IActionResult>(
+            Ok,
+            ex => NotFound(new NotFoundResponse(ex))
         );
     }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(InvalidDataCreateBookResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(InvalidDataResponse), StatusCodes.Status400BadRequest)]
     public IActionResult CreateBook([FromBody] CreateBookDTO dto)
     {
-        return bookService.Create(dto).Match<IActionResult>(
-                ex => BadRequest(new InvalidDataCreateBookResponse(ex)),
-                () => Created()
-            );
+        return _bookService.Create(dto).Match<IActionResult>(
+            ex => BadRequest(new InvalidDataResponse(ex)),
+            Created
+        );
     }
 
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BookNotFoundResponse), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(InvalidDataUpdateBookResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(InvalidDataException), StatusCodes.Status400BadRequest)]
     public IActionResult UpdateBook([FromRoute] Guid id, [FromBody] UpdateBookDTO dto)
     {
-        var result = bookService.Update(id, dto);
-
-        return result.Type switch
-        {
-            UpdateBookResultType.OK => Ok(),
-            UpdateBookResultType.BOOK_NOT_FOUND => NotFound(
-                new BookNotFoundResponse(
-                    (result.Exception.Unwrap() as BookNotFoundException)!
-                    )
-                ),
-            UpdateBookResultType.INVALID_UPDATE_BOOK_DTO => BadRequest(
-                new InvalidDataUpdateBookResponse(
-                    (result.Exception.Unwrap() as InvalidUpdateBookDTOException)!
-                    )
-                ),
-            _ => throw new NotImplementedException()
-        };
+        return _bookService.Update(id, dto).Match<IActionResult>(
+            ex =>
+            {
+                return ex.Match<IActionResult>(
+                    notFound => NotFound(new NotFoundResponse(notFound)),
+                    invalidDto => BadRequest(new InvalidDataResponse(invalidDto))
+                );
+            },
+            NoContent
+        );
     }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BookNotFoundResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(NotFoundResponse), StatusCodes.Status404NotFound)]
     public ActionResult DeleteBook([FromRoute] Guid id)
     {
-        return bookService.Delete(id).Match<ActionResult>(
-            ex => NotFound(new BookNotFoundResponse(ex)),
-            () => Ok()
+        return _bookService.Delete(id).Match<ActionResult>(
+            ex => NotFound(new NotFoundResponse(ex)),
+            Ok
         );
     }
 }
